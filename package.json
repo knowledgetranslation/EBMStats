@@ -1,6 +1,6 @@
 {
   "name": "ebmstats",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "",
   "main": "index.js",
   "repository": {
@@ -12,7 +12,7 @@
   "bugs": {
     "url": "https://github.com/knowledgetranslation/EBMStats/issues"
   },
-  "devDependencies": {
+  "dependencies": {
     "chai": "^1.10.0",
     "chi-squared": "^1.1.0",
     "decimal-adjust": "0.0.0",
