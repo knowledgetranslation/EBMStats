@@ -19,13 +19,13 @@ npm install ebmstats --save
 ```
 var ebmstats = require('ebmstats');
 
-var diseasePos = 1;
-var noDiseasePos = 2;
-var diseaseNeg = 3;
-var noDiseaseNeg = 4;
+var a = 1;
+var b = 2;
+var c = 3;
+var d = 4;
 
 // set values
-ebmstats.updateValues(diseasePos, noDiseasePos, diseaseNeg, noDiseaseNeg);
+ebmstats.updateValues(a, b, c, d);
 
 // run tests
 ebmstats.getRct()               // returns json
