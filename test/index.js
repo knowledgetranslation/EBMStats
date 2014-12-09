@@ -1,7 +1,7 @@
 var should = require('chai').should(),
-    ktStats = require('../index');
+    ebmstats = require('../index');
 
-ktStats.updateValues(1, 2, 3, 4);
+ebmstats.updateValues(1, 2, 3, 4);
 
 describe('Rct Test', function() {
   it('returns expected value', function() {
@@ -20,7 +20,7 @@ describe('Rct Test', function() {
       "nntUpperLimit":1.9
     };
 
-    JSON.stringify(ktStats.getRct()).should.equal(JSON.stringify(expectedValue));
+    JSON.stringify(ebmstats.getRct()).should.equal(JSON.stringify(expectedValue));
   })
 })
 
@@ -48,7 +48,7 @@ describe('Diagnostic Test', function() {
       "lrMinusUpperLimit":2.504
     };
 
-    JSON.stringify(ktStats.getDiagnosticTest()).should.equal(JSON.stringify(expectedValue));
+    JSON.stringify(ebmstats.getDiagnosticTest()).should.equal(JSON.stringify(expectedValue));
   })
 })
 
@@ -62,7 +62,7 @@ describe('Case Control Study Test', function() {
       "orUpperLimit":11.285
     };
 
-    JSON.stringify(ktStats.getCaseControlStudy()).should.equal(JSON.stringify(expectedValue));
+    JSON.stringify(ebmstats.getCaseControlStudy()).should.equal(JSON.stringify(expectedValue));
   })
 })
 
@@ -82,6 +82,6 @@ describe('Prospective Study Test', function() {
       "nntUpperLimit":1.9
     };
 
-    JSON.stringify(ktStats.getProspectiveStudy()).should.equal(JSON.stringify(expectedValue));
+    JSON.stringify(ebmstats.getProspectiveStudy()).should.equal(JSON.stringify(expectedValue));
   })
 })
