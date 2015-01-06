@@ -8,7 +8,7 @@
     "url": "git://github.com/knowledgetranslation/EBMStats.git"
   },
   "author": "Nikolas LeBlanc <nikolas.leblanc@gmail.com>",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/knowledgetranslation/EBMStats/issues"
   },
@@ -18,10 +18,10 @@
   },
   "dependencies": {
     "chi-squared": "^1.1.0",
-    "decimal-adjust": "0.0.0"
+    "decimal-adjust": "0.0.0",
+    "ractive": "^0.6.1"
   },
   "scripts": {
     "test": "make test"
-  },
-  "license": "MIT"
+  }
 }

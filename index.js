@@ -179,8 +179,64 @@ function getDiagnosticTest() {
   };
 }
 
-function getDiagnosticTestGraph(lrPlus, lrMinus) {
+function plotGraph(template, lrPlus, lrMinus, canvas) {
   // do something to return a graph, a png for example, maybe a binary string so nothing has to save to memory.
+
+  var lineRed = "M0," + canvas.height; // move cursor to origin
+  var lineBlue = "M0," + canvas.height; // move cursor to origin
+
+  var lastPointPlusX = 0,
+      lastPointPlusY = 0,
+      lastPointMinusX = 0,
+      lastPointMinusY = 0;
+
+  var pretestProb = 0;
+
+  while (pretestProb <= 1) {
+    pretestProb = pretestProb + 0.001;
+
+    pretestOdds = 0;
+    if (pretestProb != 1) {
+        pretestOdds = pretestProb / (1 - pretestProb);
+    }
+
+    posttestProbPlusNumerator = pretestOdds * lrPlus;
+    posttestProbPlusDenominator = 1 + (pretestOdds * lrPlus);
+
+    posttestProbPlus = 0;
+    if (posttestProbPlusDenominator != 0) {
+      posttestProbPlus = posttestProbPlusNumerator / posttestProbPlusDenominator;
+    }
+
+    posttestProbMinusNumerator = pretestOdds * lrMinus;
+    posttestProbMinusDenominator = 1 + (pretestOdds * lrMinus);
+
+    posttestProbMinus = 0;
+    if (posttestProbMinusDenominator != 0) {
+      posttestProbMinus = posttestProbMinusNumerator / posttestProbMinusDenominator;
+    }
+
+    xPlus = pretestProb * canvas.width;
+    yPlus = canvas.height - posttestProbPlus * canvas.height;
+
+    lineBlue += " L" + xPlus + "," + yPlus; // draw line to new x,y coordinate
+
+    lastPointPlusX = xPlus;
+    lastPointPlusY = yPlus;
+
+    xMinus = pretestProb * canvas.width;
+    yMinus = canvas.height - posttestProbMinus * canvas.height;
+
+    lineRed += " L" + xMinus + "," + yMinus; // draw line to new x,y coordinate
+
+    lastPointMinusX = xMinus;
+    lastPointMinusY = yMinus;
+  }
+
+  template = template.split("{{red}}").join(lineRed);
+  template = template.split("{{blue}}").join(lineBlue);
+
+  return template;
 }
 
 function getProspectiveStudy() {
@@ -628,5 +684,6 @@ module.exports = {
   getDiagnosticTest: getDiagnosticTest,
   getCaseControlStudy: getCaseControlStudy,
   getRct: getRct,
-  getProspectiveStudy: getProspectiveStudy
+  getProspectiveStudy: getProspectiveStudy,
+  plotGraph: plotGraph
 }
