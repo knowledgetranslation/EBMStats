@@ -8,6 +8,9 @@ var b = 0;
 var c = 0;
 var d = 0;
 
+var lrPlus = 0;
+var lrMinus = 0;
+
 var nr1 = 0;
 var nr2 = 0;
 
@@ -38,17 +41,23 @@ var bigN = 0;
 })();
 
 
-function updateValues(newA, newB, newC, newD) {
+function updateValues(newA, newB, newC, newD, newLrPlus, newLrMinus) {
   // check which values have changed
-  var aChanged = a !== newA;
-  var bChanged = b !== newB;
-  var cChanged = c !== newC;
-  var dChanged = d !== newD;
+  var aChanged        = (a !== newA);
+  var bChanged        = (b !== newB);
+  var cChanged        = (c !== newC);
+  var dChanged        = (d !== newD);
+
+  var lrPlusChanged   = (lrPlus !== lrPlusChanged);
+  var lrMinusChanged  = (lrMinus !== lrMinusChanged);
 
   a = newA;
   b = newB;
   c = newC;
   d = newD;
+
+  lrPlus = newLrPlus;
+  lrMinus = newLrMinus;
 
   if (aChanged || bChanged) {
     nr1 = a + b;
@@ -67,10 +76,11 @@ function updateValues(newA, newB, newC, newD) {
 }
 
 function toString() {
-  console.log(a + " " + b + " " + c + " " + d + " " + nr1 + " " + nr2 + " " + nc1 + " " + nc2);
+  console.log(a + " " + b + " " + c + " " + d + " " + lrPlus + " " + lrMinus + " " + nr1 + " " + nr2 + " " + nc1 + " " + nc2);
 }
 
 function getDiagnosticTest() {
+
   var sensitivity, sensitivityConfidence;
   var specificity, specificityConfidence;
   var ppv, ppvConfidence;
@@ -167,6 +177,10 @@ function getDiagnosticTest() {
     'lrMinusLowerLimit': Math.round10(lrMinusLowerLimit, -3),
     'lrMinusUpperLimit': Math.round10(lrMinusUpperLimit, -3)
   };
+}
+
+function getDiagnosticTestGraph(lrPlus, lrMinus) {
+  // do something to return a graph, a png for example, maybe a binary string so nothing has to save to memory.
 }
 
 function getProspectiveStudy() {
