@@ -1,6 +1,6 @@
 {
   "name": "ebmstats",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "",
   "main": "index.js",
   "repository": {
@@ -18,8 +18,7 @@
   },
   "dependencies": {
     "chi-squared": "^1.1.0",
-    "decimal-adjust": "0.0.0",
-    "ractive": "^0.6.1"
+    "decimal-adjust": "0.0.0"
   },
   "scripts": {
     "test": "make test"
