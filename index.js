@@ -661,6 +661,5 @@ module.exports = {
   getCaseControlStudy: getCaseControlStudy,
   getRct: getRct,
   getProspectiveStudy: getProspectiveStudy,
-  plotGraph: plotGraph,
   getCoordinatesOfCurve: getCoordinatesOfCurve
 }
