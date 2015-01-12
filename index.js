@@ -179,18 +179,12 @@ function getDiagnosticTest() {
   };
 }
 
-function plotGraph(template, lrPlus, lrMinus, canvas) {
-  // do something to return a graph, a png for example, maybe a binary string so nothing has to save to memory.
-
-  var lineRed = "M0," + canvas.height; // move cursor to origin
-  var lineBlue = "M0," + canvas.height; // move cursor to origin
-
-  var lastPointPlusX = 0,
-      lastPointPlusY = 0,
-      lastPointMinusX = 0,
-      lastPointMinusY = 0;
+function _getCoordinatesOfCurve(lr, canvas) {
+  var points = [];
 
   var pretestProb = 0;
+
+  //y = L*​x/​((L-​1)*​x+​1)
 
   while (pretestProb <= 1) {
     pretestProb = pretestProb + 0.001;
@@ -200,38 +194,43 @@ function plotGraph(template, lrPlus, lrMinus, canvas) {
         pretestOdds = pretestProb / (1 - pretestProb);
     }
 
-    posttestProbPlusNumerator = pretestOdds * lrPlus;
-    posttestProbPlusDenominator = 1 + (pretestOdds * lrPlus);
+    posttestProbNumerator = pretestOdds * lr;
+    posttestProbDenominator = 1 + (pretestOdds * lr);
 
-    posttestProbPlus = 0;
-    if (posttestProbPlusDenominator != 0) {
-      posttestProbPlus = posttestProbPlusNumerator / posttestProbPlusDenominator;
+    posttestProb = 0;
+    if (posttestProbDenominator != 0) {
+      posttestProb = posttestProbNumerator / posttestProbDenominator;
     }
 
-    posttestProbMinusNumerator = pretestOdds * lrMinus;
-    posttestProbMinusDenominator = 1 + (pretestOdds * lrMinus);
+    x = pretestProb * canvas.width;
+    y = canvas.height - posttestProb * canvas.height;
 
-    posttestProbMinus = 0;
-    if (posttestProbMinusDenominator != 0) {
-      posttestProbMinus = posttestProbMinusNumerator / posttestProbMinusDenominator;
-    }
+    var point = {
+      "x": x,
+      "y": y
+    };
 
-    xPlus = pretestProb * canvas.width;
-    yPlus = canvas.height - posttestProbPlus * canvas.height;
-
-    lineBlue += " L" + xPlus + "," + yPlus; // draw line to new x,y coordinate
-
-    lastPointPlusX = xPlus;
-    lastPointPlusY = yPlus;
-
-    xMinus = pretestProb * canvas.width;
-    yMinus = canvas.height - posttestProbMinus * canvas.height;
-
-    lineRed += " L" + xMinus + "," + yMinus; // draw line to new x,y coordinate
-
-    lastPointMinusX = xMinus;
-    lastPointMinusY = yMinus;
+    points.push(point);
   }
+  return points;
+}
+
+function plotGraph(template, lrPlus, lrMinus, canvas) {
+  // do something to return a graph, a png for example, maybe a binary string so nothing has to save to memory.
+
+  var lineRed = "M0," + canvas.height; // move cursor to origin
+  var lineBlue = "M0," + canvas.height; // move cursor to origin
+
+  var pointsBlue = _getCoordinatesOfCurve(lrPlus, canvas);
+  var pointsRed = _getCoordinatesOfCurve(lrMinus, canvas);
+
+  pointsBlue.forEach(function(point) {
+    lineBlue += " L" + point.x + "," + point.y; // draw line to new x,y coordinate
+  });
+
+  pointsRed.forEach(function(point) {
+    lineRed += " L" + point.x + "," + point.y; // draw line to new x,y coordinate
+  });
 
   template = template.split("{{red}}").join(lineRed);
   template = template.split("{{blue}}").join(lineBlue);
