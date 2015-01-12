@@ -179,7 +179,7 @@ function getDiagnosticTest() {
   };
 }
 
-function _getCoordinatesOfCurve(lr, canvas) {
+function getCoordinatesOfCurve(lr, canvas) {
   var points = [];
 
   var pretestProb = 0;
@@ -213,29 +213,6 @@ function _getCoordinatesOfCurve(lr, canvas) {
     points.push(point);
   }
   return points;
-}
-
-function plotGraph(template, lrPlus, lrMinus, canvas) {
-  // do something to return a graph, a png for example, maybe a binary string so nothing has to save to memory.
-
-  var lineRed = "M0," + canvas.height; // move cursor to origin
-  var lineBlue = "M0," + canvas.height; // move cursor to origin
-
-  var pointsBlue = _getCoordinatesOfCurve(lrPlus, canvas);
-  var pointsRed = _getCoordinatesOfCurve(lrMinus, canvas);
-
-  pointsBlue.forEach(function(point) {
-    lineBlue += " L" + point.x + "," + point.y; // draw line to new x,y coordinate
-  });
-
-  pointsRed.forEach(function(point) {
-    lineRed += " L" + point.x + "," + point.y; // draw line to new x,y coordinate
-  });
-
-  template = template.split("{{red}}").join(lineRed);
-  template = template.split("{{blue}}").join(lineBlue);
-
-  return template;
 }
 
 function getProspectiveStudy() {
@@ -684,5 +661,6 @@ module.exports = {
   getCaseControlStudy: getCaseControlStudy,
   getRct: getRct,
   getProspectiveStudy: getProspectiveStudy,
-  plotGraph: plotGraph
+  plotGraph: plotGraph,
+  getCoordinatesOfCurve: getCoordinatesOfCurve
 }
