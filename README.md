@@ -104,7 +104,7 @@ var testValues = {
 ```
 Calling
 ```
-ebmstats.getProspectiveTest(testValues);
+ebmstats.getCaseControlStudy(testValues);
 ```
 Returns
 ```
@@ -131,7 +131,7 @@ var testValues = {
 ```
 Calling
 ```
-ebmstats.getProspectiveTest(testValues);
+ebmstats.getRct(testValues);
 ```
 Returns
 ```
