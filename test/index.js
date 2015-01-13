@@ -1,8 +1,6 @@
 var should = require('chai').should(),
     ebmstats = require('../index');
 
-ebmstats.updateValues(1, 2, 3, 4);
-
 describe('Rct Test', function() {
   it('returns expected value', function() {
 
@@ -20,7 +18,7 @@ describe('Rct Test', function() {
       "nntUpperLimit":1.9
     };
 
-    JSON.stringify(ebmstats.getRct()).should.equal(JSON.stringify(expectedValue));
+    JSON.stringify(ebmstats.getRct({"experimentalOutcome":1, "experimentalNoOutcome":2, "controlOutcome":3, "controlNoOutcome":4})).should.equal(JSON.stringify(expectedValue));
   })
 })
 
@@ -31,7 +29,7 @@ describe('Diagnostic Test', function() {
       "sensitivity":0.25,
       "sensitivityLowerLimit":0.046,
       "sensitivityUpperLimit":0.699,
-      "specificity":0,
+      "specificity":0.667,
       "specificityLowerLimit":0.3,
       "specificityUpperLimit":0.903,
       "ppv":0.333,
@@ -48,7 +46,7 @@ describe('Diagnostic Test', function() {
       "lrMinusUpperLimit":2.504
     };
 
-    JSON.stringify(ebmstats.getDiagnosticTest()).should.equal(JSON.stringify(expectedValue));
+    JSON.stringify(ebmstats.getDiagnosticTest({"testPositiveDisease": 1, "testPositiveNoDisease": 2, "testNegativeDisease": 3, "testNegativeNoDisease": 4})).should.equal(JSON.stringify(expectedValue));
   })
 })
 
@@ -62,7 +60,7 @@ describe('Case Control Study Test', function() {
       "orUpperLimit":11.285
     };
 
-    JSON.stringify(ebmstats.getCaseControlStudy()).should.equal(JSON.stringify(expectedValue));
+    JSON.stringify(ebmstats.getCaseControlStudy({"caseExposed":1, "caseNotExposed":2, "controlExposed": 3, "controlNotExposed": 4})).should.equal(JSON.stringify(expectedValue));
   })
 })
 
@@ -82,6 +80,6 @@ describe('Prospective Study Test', function() {
       "nntUpperLimit":1.9
     };
 
-    JSON.stringify(ebmstats.getProspectiveStudy()).should.equal(JSON.stringify(expectedValue));
+    JSON.stringify(ebmstats.getProspectiveStudy({"treatedDisease":1, "treatedNoDisease":2, "notTreatedDisease":3, "notTreatedNoDisease":4})).should.equal(JSON.stringify(expectedValue));
   })
 })

@@ -3,23 +3,6 @@ var decimalAdjust = require('decimal-adjust');
 
 var z = 1.959964;
 
-var a = 0;
-var b = 0;
-var c = 0;
-var d = 0;
-
-var lrPlus = 0;
-var lrMinus = 0;
-
-var nr1 = 0;
-var nr2 = 0;
-
-var nc1 = 0;
-var nc2 = 0;
-
-var bigN = 0;
-
-
 (function(){
   if (!Math.round10) {
     Math.round10 = function(value, exp) {
@@ -40,53 +23,33 @@ var bigN = 0;
   }
 })();
 
+function getDiagnosticTest(testValues) {
+  var nr1, nc1,
+      nr2, nc2;
 
-function updateValues(newA, newB, newC, newD, newLrPlus, newLrMinus) {
-  // check which values have changed
-  var aChanged        = (a !== newA);
-  var bChanged        = (b !== newB);
-  var cChanged        = (c !== newC);
-  var dChanged        = (d !== newD);
-
-  var lrPlusChanged   = (lrPlus !== lrPlusChanged);
-  var lrMinusChanged  = (lrMinus !== lrMinusChanged);
-
-  a = newA;
-  b = newB;
-  c = newC;
-  d = newD;
-
-  lrPlus = newLrPlus;
-  lrMinus = newLrMinus;
-
-  if (aChanged || bChanged) {
-    nr1 = a + b;
-  }
-  if (aChanged || cChanged) {
-    nc1 = a + c;
-  }
-  if (cChanged || dChanged) {
-    nc2 = b + d;
-  }
-  if (cChanged || dChanged) {
-    nr2 = c + d;
-  }
-
-  bigN = a + b + c + d;
-}
-
-function toString() {
-  console.log(a + " " + b + " " + c + " " + d + " " + lrPlus + " " + lrMinus + " " + nr1 + " " + nr2 + " " + nc1 + " " + nc2);
-}
-
-function getDiagnosticTest() {
+  var bigN;
 
   var sensitivity, sensitivityConfidence;
   var specificity, specificityConfidence;
   var ppv, ppvConfidence;
   var npv, npvConfidence;
-  var lrPlus, lrPlusLowerLimit, lrPlusUpperLimit;
-  var lrMinus, lrMinusLowerLimit, lrMinusUpperLimit;
+  var lrPlusLowerLimit, lrPlusUpperLimit;
+  var lrMinusLowerLimit, lrMinusUpperLimit;
+
+  var a =           testValues.testPositiveDisease;
+  var b =           testValues.testPositiveNoDisease;
+  var c =           testValues.testNegativeDisease;
+  var d =           testValues.testNegativeNoDisease;
+
+  var lrPlus =      testValues.lrPlus;
+  var lrNegative =  testValues.lrMinus;
+
+  nr1 = a + b;
+  nc1 = a + c;
+  nc2 = b + d;
+  nr2 = c + d;
+
+  bigN = a + b + c + d;
 
   if (nc1 === 0 || nc2 === 0 || nr1 === 0 || nr2 === 0) {
     return false;
@@ -161,7 +124,7 @@ function getDiagnosticTest() {
     'sensitivity': Math.round10(sensitivity, -3),
     'sensitivityLowerLimit': Math.round10(sensitivityConfidence['lower'], -3),
     'sensitivityUpperLimit': Math.round10(sensitivityConfidence['upper'], -3),
-    'specificity': Math.round10(specificity, 3),
+    'specificity': Math.round10(specificity, -3),
     'specificityLowerLimit': Math.round10(specificityConfidence['lower'], -3),
     'specificityUpperLimit': Math.round10(specificityConfidence['upper'], -3),
     'ppv': Math.round10(ppv, -3),
@@ -179,44 +142,13 @@ function getDiagnosticTest() {
   };
 }
 
-function getCoordinatesOfCurve(lr, canvas) {
-  var points = [];
+function getProspectiveStudy(testValues) {
+  var a =           testValues.treatedDisease;
+  var b =           testValues.treatedNoDisease;
+  var c =           testValues.notTreatedDisease;
+  var d =           testValues.notTreatedNoDisease;
 
-  var pretestProb = 0;
-
-  //y = L*​x/​((L-​1)*​x+​1)
-
-  while (pretestProb <= 1) {
-    pretestProb = pretestProb + 0.001;
-
-    pretestOdds = 0;
-    if (pretestProb != 1) {
-        pretestOdds = pretestProb / (1 - pretestProb);
-    }
-
-    posttestProbNumerator = pretestOdds * lr;
-    posttestProbDenominator = 1 + (pretestOdds * lr);
-
-    posttestProb = 0;
-    if (posttestProbDenominator != 0) {
-      posttestProb = posttestProbNumerator / posttestProbDenominator;
-    }
-
-    x = pretestProb * canvas.width;
-    y = canvas.height - posttestProb * canvas.height;
-
-    var point = {
-      "x": x,
-      "y": y
-    };
-
-    points.push(point);
-  }
-  return points;
-}
-
-function getProspectiveStudy() {
-  var chiSquared = _getChiSquared();
+  var chiSquared = _getChiSquared(a, b, c, d);
 
   var pValue;
   var rr, rrNumerator, rrDenominator, rrrLowerLimit, rrrUpperLimit;
@@ -261,8 +193,8 @@ function getProspectiveStudy() {
     return false;
   }
 
-  arr = _getArr();
-  arrConfidence = _getArrConfidence(arr);
+  arr = _getArr(a, b, c, d);
+  arrConfidence = _getArrConfidence(arr, a, b, c, d);
 
   if (typeof arr !== 'number' || isNaN(arr)) {
     return false;
@@ -298,8 +230,13 @@ function getProspectiveStudy() {
   };
 }
 
-function getCaseControlStudy() {
-  var chiSquared = _getChiSquared();
+function getCaseControlStudy(testValues) {
+  var a =           testValues.caseExposed;
+  var b =           testValues.caseNotExposed;
+  var c =           testValues.controlExposed;
+  var d =           testValues.controlNotExposed;
+
+  var chiSquared = _getChiSquared(a, b, c, d);
 
   var pValue;
   var orNumerator, orDenominator, or;
@@ -352,8 +289,13 @@ function getCaseControlStudy() {
   };
 }
 
-function getRct() {
-  var chiSquared = _getChiSquared();
+function getRct(testValues) {
+  var a =           testValues.experimentalOutcome;
+  var b =           testValues.experimentalNoOutcome;
+  var c =           testValues.controlOutcome;
+  var d =           testValues.controlNoOutcome;
+
+  var chiSquared = _getChiSquared(a, b, c, d);
   var pValue;
   var rrr, rrrNumerator, rrrDenominator;
   var rrrLowerLimit, rrrUpperLimit;
@@ -402,8 +344,8 @@ function getRct() {
     return false;
   }
 
-  arr = _getArr();
-  arrConfidence = _getArrConfidence(arr);
+  arr = _getArr(a, b, c, d);
+  arrConfidence = _getArrConfidence(arr, a, b, c, d);
 
   if (typeof arr !== 'number' || isNaN(arr)) {
     return false;
@@ -437,6 +379,42 @@ function getRct() {
     "nntLowerLimit": Math.round10(nntConfidence['lower'], -3),
     "nntUpperLimit": Math.round10(nntConfidence['upper'], -3)
   };
+}
+
+function getCoordinatesOfCurve(lr, canvas) {
+  var points = [];
+
+  var pretestProb = 0;
+
+  //y = L*​x/​((L-​1)*​x+​1)
+
+  while (pretestProb <= 1) {
+    pretestProb = pretestProb + 0.001;
+
+    pretestOdds = 0;
+    if (pretestProb != 1) {
+        pretestOdds = pretestProb / (1 - pretestProb);
+    }
+
+    posttestProbNumerator = pretestOdds * lr;
+    posttestProbDenominator = 1 + (pretestOdds * lr);
+
+    posttestProb = 0;
+    if (posttestProbDenominator != 0) {
+      posttestProb = posttestProbNumerator / posttestProbDenominator;
+    }
+
+    x = pretestProb * canvas.width;
+    y = canvas.height - posttestProb * canvas.height;
+
+    var point = {
+      "x": x,
+      "y": y
+    };
+
+    points.push(point);
+  }
+  return points;
 }
 
 function _getDiagnosticTestConfidence(y, t, n) {
@@ -481,10 +459,17 @@ function _getDiagnosticTestConfidence(y, t, n) {
   };
 }
 
-function _getChiSquared() {
+function _getChiSquared(a, b, c, d) {
   var chiSquaredNumerator;
   var chiSquaredDenominator;
   var chiSquared;
+
+  var bigN = a + b + c + d;
+
+  var nr1 = a + b;
+  var nc1 = a + c;
+  var nc2 = b + d;
+  var nr2 = c + d;
 
   chiSquaredNumerator = bigN * Math.pow((Math.abs((a * d) - (b * c)) - (bigN / 2)), 2);
   chiSquaredDenominator = nr1 * nr2 * nc1 * nc2;
@@ -506,7 +491,7 @@ function _getPValue(chiVal) {
   return 1 - chiSquared.cdf(chiVal, 1);
 }
 
-function _getArr() {
+function _getArr(a, b, c, d) {
   var arr;
 
   if (c + d === 0) {
@@ -525,11 +510,16 @@ function _getArr() {
   return arr;
 }
 
-function _getArrConfidence(arr) {
+function _getArrConfidence(arr, a, b, c, d) {
   var u1Numerator, u1Denominator, u1;
   var u2Numerator, u2Denominator, u2;
   var w1Numerator, w1Denominator, w1;
   var w2Numerator, w2Denominator, w2;
+
+  var nr1 = a + b;
+  var nc1 = a + c;
+  var nc2 = b + d;
+  var nr2 = c + d;
 
   var newUpper, newLower;
 
@@ -656,7 +646,6 @@ function _getNntConfidence(arrConfidence) {
 }
 
 module.exports = {
-  updateValues: updateValues,
   getDiagnosticTest: getDiagnosticTest,
   getCaseControlStudy: getCaseControlStudy,
   getRct: getRct,
